@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probabilidad y Estadística - App Web</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Capas de Inmersión -->
+    <div class="scanlines"></div>
+    <div class="monitor-flicker"></div>
+    <div id="error-overlay" class="error-glitch-overlay"></div> <!-- Nueva capa de interferencia -->
+
+    <header>
+        <div class="glitch-wrapper">
+            <h1 class="glitch" data-text="PROBABILIDAD & ESTADÍSTICA">PROBABILIDAD & ESTADÍSTICA</h1>
+        </div>
+        <div class="tech-lines">
+            <span class="line-text">ESTADO: CONEXIÓN_SEGURA</span>
+            <span class="line-text">PROTOCOLO: NIGHT_CITY_NET_v4.2</span>
+        </div>
+    </header>
+
+    <!-- Audio de Grado Militar -->
+    <audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2561/2561-preview.mp3"></audio> <!-- Tactical Beep -->
+    <audio id="snd-error" src="https://assets.mixkit.co/active_storage/sfx/1690/1690-preview.mp3"></audio> <!-- Heavy Glitch Alert -->
+    <audio id="snd-glitch" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3"></audio> <!-- UI Transition -->
+
+    <nav>
+        <button class="tab-btn active" data-tab="datos">01_DATOS</button>
+        <button class="tab-btn" data-tab="graficos">02_ANÁLISIS</button>
+        <button class="tab-btn" data-tab="probabilidad">03_PROBA</button>
+        <button class="tab-btn" data-tab="conjuntos">04_CONJUNTOS</button>
+    </nav>
+
+    <main id="app-content">
+        <!-- Modal de Error -->
+        <div id="error-modal" class="modal">
+            <div class="modal-content">
+                <h3 style="color: var(--secondary-color);">! ERROR_DE_SISTEMA</h3>
+                <p id="error-msg">Entrada no válida. Solo se permiten caracteres numéricos.</p>
+                <button onclick="closeModal()" class="danger">REINICIAR_SISTEMA</button>
+            </div>
+        </div>
+
+        <!-- Sección de Datos y Estadística -->
+        <section id="datos" class="tab-content active">
+            <div class="card main-input-card">
+                <h2>TERMINAL_DE_ENTRADA</h2>
+                <div class="input-group">
+                    <textarea id="data-input" placeholder="ESPERANDO_DATOS..."></textarea>
+                    <div class="button-row">
+                        <button id="btn-process" class="primary">EJECUTAR_DIAGNOSTICO</button>
+                        <button id="btn-random" class="secondary">GENERAR_ALEATORIOS</button>
+                        <button id="btn-clear" class="danger">LIMPIAR_MEMORIA</button>
+                    </div>
+                </div>
+                <div id="data-preview" class="data-chips-container">
+                    <!-- Los chips de datos aparecerán aquí -->
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="card" id="stats-card">
+                    <h2>Medidas de Tendencia Central</h2>
+                    <div id="stats-output">
+                        <p>ESPERANDO_DATOS_PARA_ANALIZAR...</p>
+                    </div>
+                </div>
+
+                <div class="card" id="freq-table-card">
+                    <h2>Tabla de Frecuencias</h2>
+                    <div class="table-container">
+                        <table id="freq-table">
+                            <thead>
+                                <tr>
+                                    <th>Dato</th>
+                                    <th>fi</th>
+                                    <th>fr</th>
+                                    <th>Fi</th>
+                                    <th>Fr</th>
+                                </tr>
+                            </thead>
+                            <tbody id="freq-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Gráficos -->
+        <section id="graficos" class="tab-content">
+            <div class="charts-container">
+                <div class="card chart-card">
+                    <h2>Histograma y Polígono</h2>
+                    <canvas id="histogramChart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <h2>Ojiva</h2>
+                    <canvas id="ojivaChart"></canvas>
+                </div>
+                <div class="card chart-card">
+                    <h2>Diagrama de Pareto</h2>
+                    <canvas id="paretoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Probabilidad -->
+        <section id="probabilidad" class="tab-content">
+            <div class="results-grid">
+                <div class="card">
+                    <h2>Probabilidad Básica</h2>
+                    <div class="form-group">
+                        <label for="fav-cases">Casos Favorables:</label>
+                        <input type="number" id="fav-cases" min="0" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="total-cases">Casos Totales:</label>
+                        <input type="number" id="total-cases" min="1" value="2">
+                    </div>
+                    <div class="button-row">
+                        <button id="btn-calc-prob" class="primary">CALCULAR_PROBABILIDAD</button>
+                    </div>
+                    <div id="prob-result" class="result-box"></div>
+                </div>
+
+                <div class="card">
+                    <h2>Combinatoria</h2>
+                    <div class="form-group">
+                        <label for="n-val">n (total):</label>
+                        <input type="number" id="n-val" min="0" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="r-val">r (muestra):</label>
+                        <input type="number" id="r-val" min="0" value="3">
+                    </div>
+                    <div class="button-row">
+                        <button id="btn-perm" class="primary">PERMUTACIÓN</button>
+                        <button id="btn-comb" class="primary">COMBINACIÓN</button>
+                    </div>
+                    <div id="combinatoria-result" class="result-box"></div>
+                </div>
+
+                <div class="card">
+                    <h2>Diagrama de Árbol (Regla Multiplicativa)</h2>
+                    <p>Configura las ramas:</p>
+                    <div class="input-group">
+                        <input type="text" id="tree-input" placeholder="Eje: Cara:0.5, Cruz:0.5" value="Cara:0.5, Cruz:0.5">
+                        <select id="tree-levels" style="background:#000; color:var(--primary-color); border:1px solid var(--primary-color); padding:5px; margin-left:10px;">
+                            <option value="1">1 Nivel</option>
+                            <option value="2">2 Niveles</option>
+                            <option value="3">3 Niveles</option>
+                        </select>
+                        <button id="btn-tree" class="primary">GENERAR_ÁRBOL</button>
+                    </div>
+                    <div id="tree-container" class="tree-viz">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Conjuntos -->
+        <section id="conjuntos" class="tab-content">
+            <div class="card">
+                <h2>Operaciones con Conjuntos</h2>
+                <div class="input-group">
+                    <label>Conjunto A (sep. por comas):</label>
+                    <input type="text" id="set-a" placeholder="1, 2, 3, 4">
+                </div>
+                <div class="input-group">
+                    <label>Conjunto B (sep. por comas):</label>
+                    <input type="text" id="set-b" placeholder="3, 4, 5, 6">
+                </div>
+                <div class="button-row">
+                    <button id="btn-union" class="primary">UNIÓN (A ∪ B)</button>
+                    <button id="btn-inter" class="primary">INTERSECCIÓN (A ∩ B)</button>
+                    <button id="btn-diff" class="primary">DIFERENCIA (A - B)</button>
+                </div>
+                <div id="sets-result" class="result-box"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - PROYECTO NEURAL DE ESTADÍSTICA | NIGHT CITY</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
